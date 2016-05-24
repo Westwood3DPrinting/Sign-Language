@@ -1,3 +1,9 @@
+
+
+# Change this every time
+arduino_port = "/dev/cu.usbmodem1411"
+
+
 import urllib2
 
 dictionary = {'a' : [0,0,0,0,1,0],
@@ -58,7 +64,7 @@ connected = False
 
 ## open the serial port that your ardiono 
 ## is connected to.
-ser = serial.Serial("/dev/cu.usbmodem1411", 9600)
+ser = serial.Serial(arduino_port, 9600)
 print 'connecting'
 while not connected:
     serin = ser.read()
