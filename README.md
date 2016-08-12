@@ -14,6 +14,6 @@ This project allows our 3D Printed robot arm to hold a conversation by respondin
 10. Talk to it, and it will respond.
 
 # Dealing With Bugs
-1. `NetServer.exe` needs to get phased out eventually.
+1. [`NetServer.exe`](https://github.com/ext0/3DPrintedArm) needs to get phased out eventually.
 2. If the whole thing crashes, starting the steps over from scratch usually works
 3. If the web interface hangs, restart it. This is web speech API acting up.
