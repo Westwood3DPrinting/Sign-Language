@@ -4,7 +4,7 @@
 arduino_port = "/dev/ttyS0"
 
 
-import urllib2
+import speech_recognition as sr, urllib2
 
 dictionary = {'a' : [0,0,0,0,1,0],
               'b' : [1,1,1,1,1,0],
@@ -33,6 +33,8 @@ dictionary = {'a' : [0,0,0,0,1,0],
               'y' : [1,0,0,0,1,0],
               'z' : [0,0,0,1,0,1] }
 
+r = sr.Recognizer()
+
 def charToCommand(char):
     if not char in dictionary:
         print "invalid letter"
@@ -54,22 +56,52 @@ def charToCommand(char):
     for m in mapped:
         ser.write(m)
         
+def respondToInput():
+  with sr.Microphone() as source:
+    audio = r.listen(source)
+  try:
+    question = r.recognize_google(audio)
+    print "You asked: \"", question, "\""
+    return cb.ask(question)
+  except sr.UnknownValueError:
+    print "Google Speech Recognizer could not recognize the audio"
+  except sr.RequestError as e:
+    print "{0}".format(e)
+  return None
+
 print 'start'
 ## import the serial library
-import serial, time
-
-## Boolean variable that will represent 
-## whether or not the arduino is connected
-connected = False
+import serial, time, Cleverbot
 
 ## open the serial port that your ardiono 
 ## is connected to.
+
 ser = serial.Serial(arduino_port, 9600)
-print 'connecting'
-while not connected:
-    serin = ser.read()
-    connected = True
-print 'connected'
+print "connecting to the Arduino"
+serin = ser.read()
+print "connected to the Arduino"
+
+print "connecting to Cleverbot"
+cb = Cleverbot.Cleverbot()
+print "connected to Cleverbot"
+
+punc = ['.', ',', '!', '?']
+
+while True:
+  try:
+    response = respondToInput();  # Take input and generate a response
+    if response is None:
+      continue
+    print "the response was: \"", response, "\""
+    for word in response.split():
+      for letter in word:
+        if "nope" != charToCommand(letter):
+          time.sleep(1)
+      time.sleep(2.25) if word[len(word) - 1] in punc else time.sleep(1.75) 
+  except:
+    pass
+
+'''
 while True:
  try:
     place = urllib2.urlopen("http://localhost:8080/status/")
@@ -83,13 +115,8 @@ while True:
             time.sleep(1)
  except:
      pass
-        
+'''        
 
 ## close the port and end the program
 ser.close()
 toggle_led();
-
-
-
-
-
